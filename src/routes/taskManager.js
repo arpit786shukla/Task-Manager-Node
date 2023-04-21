@@ -23,7 +23,6 @@ taskRoutes.delete('/:id', (req, res) => {
     let tasks = taskData.tasks;
     tasks = tasks.filter(task => task.id != taskIdPassed);
     taskData.tasks = tasks;
-    console.log(taskData);
     res.status(200);
   res.send({"message": "Task deleted successfully", "status":true});
   }
@@ -52,7 +51,6 @@ taskRoutes.put('/:id', (req, res) => {
             break;
         }
     }
-    console.log(taskData);
   res.status(200);
   res.send({"message": "Task updated successfully", "status":true});
   }
@@ -71,7 +69,6 @@ taskRoutes.post('/', (req, res) => {
   taskDetails.creationDate = date.toString();
   if(validator.validateTaskInfo(taskDetails).status) {
     taskData.tasks.push(taskDetails);
-    console.log(taskData);
     res.status(200);
     res.json(validator.validateTaskInfo(taskDetails));
   } else {
@@ -90,9 +87,7 @@ taskRoutes.get('/', (req, res) => {
         else{
             completion_flag = false;
         }
-        console.log("Completion:"+completion_flag);
         getTasks = getTasks.filter(task => task.completion_flag == completion_flag);
-        console.log(getTasks);
     }
     if(req.query.sortByCreationDate != undefined && req.query.sortByCreationDate == "true"){
         getTasks = getTasks.sort(function(a,b){
@@ -100,8 +95,6 @@ taskRoutes.get('/', (req, res) => {
             const date2 = new Date(b.creationDate);
             return date2 - date1;
         });
-        console.log("Sort:"+req.query.sortByCreationDate);
-        console.log(getTasks);
     }
   res.status(200);
   res.send(getTasks);
@@ -118,14 +111,19 @@ taskRoutes.get('/:id', (req, res) => {
     res.status(200);
     res.send(result);
     }
-})
+});
 
 taskRoutes.get('/priority/:level', (req, res) => {
-    let taskPriorityPassed = req.params.level;
-    let result = taskData.tasks.filter(val => val.priority == taskPriorityPassed);
-    
-    res.status(200);
-    res.send(result);
+    let taskPriorityPassed = String(req.params.level);
+    if(!validator.isPriority(taskPriorityPassed)){
+        res.status(400);
+        res.send({"message": "Unknown Priority type", "status": false})
+    }
+    else{
+        let result = taskData.tasks.filter(val => val.priority == taskPriorityPassed);
+        res.status(200);
+        res.send(result);
+    }
     
 })
 
