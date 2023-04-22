@@ -1,7 +1,7 @@
 # Task Manager in Node JS
 An object is used to store the tasks in memory with the format `const taskData = {"tasks":[]};`
 
-Each title has following properties:
+Each task has following properties:
 * id (generated automatically)
 * title (can't be empty)
 * description (can't be empty)
